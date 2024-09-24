@@ -6,13 +6,14 @@ using Unity.Mathematics;
 using UnityEngine;
 using static Unity.Mathematics.math;
 using static NoiseVisualization;
+using UnityEditor.ShaderGraph.Internal;
 
 public static partial class Noise
 {
     
     public delegate JobHandle ScheduleDelegate (
 		NativeArray<float3x4> positions, NativeArray<float4> noise,
-		Settings settings, SpaceTRS domainTRS, int resolution, JobHandle dependency
+		Settings settings, SpaceTRS domainTRS, int resolution, float time, JobHandle dependency
 	);
 
 
@@ -53,9 +54,12 @@ public static partial class Noise
 
 		public float3x4 domainTRS;
 
+		public float time;
+
 		public void Execute (int i) {
 			
 			float4x3 position = domainTRS.TransformVectors(transpose(positions[i]));
+			position.c0 += sin(time);
 			var hash = SmallXXHash4.Seed(settings.seed);
 			int frequency = settings.frequency;
 			
@@ -74,11 +78,12 @@ public static partial class Noise
 
         public static JobHandle ScheduleParallel (
 			NativeArray<float3x4> positions, NativeArray<float4> noise,
-			Settings settings, SpaceTRS domainTRS, int resolution	, JobHandle dependency
+			Settings settings, SpaceTRS domainTRS, int resolution	, float time, JobHandle dependency
 		) => new Job<N> {
 			positions = positions,
 			noise = noise,
 			settings = settings,
+			time = time,
 			domainTRS = domainTRS.Matrix,
 		}.ScheduleParallel(positions.Length, resolution, dependency);
 	

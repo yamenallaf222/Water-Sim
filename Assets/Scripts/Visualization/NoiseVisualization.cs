@@ -126,7 +126,7 @@ public class NoiseVisualization : MonoBehaviour
     MaterialPropertyBlock propertyBlock;
 
     
-    bool isDirty;
+    // bool isDirty;
     
 
 
@@ -136,7 +136,7 @@ public class NoiseVisualization : MonoBehaviour
 
      private void OnEnable() {
         
-        isDirty = true;
+        // isDirty = true;
 
         int length = resolution * resolution;
 
@@ -197,13 +197,13 @@ public class NoiseVisualization : MonoBehaviour
 
     private void Update() {
         
-        if(isDirty || transform.hasChanged)
-        {
-            isDirty = false;
+        // if(isDirty || transform.hasChanged)
+        // {
+            // isDirty = false;
 
-            transform.hasChanged = false;
+            // transform.hasChanged = false;
 
-            noiseJob(positions, noise, noiseSettings, domain, resolution, shapeJob(positions, normals, resolution,transform.localToWorldMatrix, default)).Complete();
+            noiseJob(positions, noise, noiseSettings, domain, resolution, Time.time, shapeJob(positions, normals, resolution,transform.localToWorldMatrix, default)).Complete();
 
             noiseBuffer.SetData(noise.Reinterpret<uint>( 4 * 4));     
 
@@ -214,7 +214,7 @@ public class NoiseVisualization : MonoBehaviour
             bounds = new Bounds(transform.position, float3(2f * cmax(abs(transform.lossyScale)) + displacement));
 
 
-        }
+        // }
 
 
         Graphics.DrawMeshInstancedProcedural(instanceMesh, 0, material, bounds, resolution * resolution, propertyBlock);
