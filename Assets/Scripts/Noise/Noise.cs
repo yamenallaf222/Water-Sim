@@ -33,6 +33,8 @@ public static partial class Noise
 		[Range(0f, 1f)]
 		public float persistence;
 
+		[Range(0, 0.5f)]
+		public float flowSpeed;
 
 		public static Settings Default => new Settings{
 			frequency = 4,
@@ -59,7 +61,7 @@ public static partial class Noise
 		public void Execute (int i) {
 			
 			float4x3 position = domainTRS.TransformVectors(transpose(positions[i]));
-			position.c0 += sin(time);
+			position.c0 += sin(time * settings.flowSpeed) + sin(2f * time * settings.flowSpeed) + sin (4f * time * settings.flowSpeed);
 			var hash = SmallXXHash4.Seed(settings.seed);
 			int frequency = settings.frequency;
 			
