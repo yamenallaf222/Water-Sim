@@ -62,6 +62,7 @@ public static partial class Noise
 			
 			float4x3 position = domainTRS.TransformVectors(transpose(positions[i]));
 			position.c0 += sin(time * settings.flowSpeed) + sin(2f * time * settings.flowSpeed) + sin (4f * time * settings.flowSpeed);
+			position.c2 += sin(time * settings.flowSpeed) + sin(3f * time * settings.flowSpeed) + sin (5f * time * settings.flowSpeed);
 			var hash = SmallXXHash4.Seed(settings.seed);
 			int frequency = settings.frequency;
 			
