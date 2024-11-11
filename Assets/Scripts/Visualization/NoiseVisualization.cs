@@ -3,6 +3,11 @@ using UnityEngine;
 using Unity.Collections;
 using static Noise;
 using static Unity.Mathematics.math;
+using System;
+using System.Collections;
+using Unity.VisualScripting;
+using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 
 public class NoiseVisualization : MonoBehaviour
 {
@@ -194,6 +199,11 @@ public class NoiseVisualization : MonoBehaviour
 
     }
 
+    public NativeArray<float4> getNoise()
+    {
+        return noise;
+    }
+
 
     private void Update() {
         
@@ -205,19 +215,28 @@ public class NoiseVisualization : MonoBehaviour
 
             noiseJob(positions, noise, noiseSettings, domain, resolution, Time.time, shapeJob(positions, normals, resolution,transform.localToWorldMatrix, default)).Complete();
 
-            noiseBuffer.SetData(noise.Reinterpret<uint>( 4 * 4));     
+            // noiseBuffer.SetData(noise.Reinterpret<uint>( 4 * 4));     
 
-            positionsBuffer.SetData(positions);
-            normalsBuffer.SetData(normals);
+            // positionsBuffer.SetData(positions);
+            // normalsBuffer.SetData(normals);
+
+            Texture2D noiseTexture = TextureCreator.generateTextureOfNoise(noise);
+            // Use MaterialPropertyBlock for per-instance updates
+
+            material.SetTexture("_Noise", noiseTexture);
+            material.SetTexture("_Normal", noiseTexture);
+            // mpb.SetTexture("_Noise", noiseTexture);
+            // mpb.SetTexture("_Normal", noiseTexture);
+            // meshRenderer.SetPropertyBlock(mpb);
 
 
-            bounds = new Bounds(transform.position, float3(2f * cmax(abs(transform.lossyScale)) + displacement));
+            // bounds = new Bounds(transform.position, float3(2f * cmax(abs(transform.lossyScale)) + displacement));
 
 
         // }
 
 
-        Graphics.DrawMeshInstancedProcedural(instanceMesh, 0, material, bounds, resolution * resolution, propertyBlock);
+        // Graphics.DrawMeshInstancedProcedural(instanceMesh, 0, material, bounds, resolution * resolution, propertyBlock);
     }
 
 }
